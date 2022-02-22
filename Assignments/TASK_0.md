@@ -21,6 +21,10 @@ Que fait chacun des avions ?
 Listez les classes du programme à la racine du dossier src/.
 Pour chacune d'entre elle, expliquez ce qu'elle représente et son rôle dans le programme.
 
+> - **Aircraft** - C'est une classe sert à la création des avions. Elle aussi sert à gérer les avions, son vitesse, son type, landed etc.
+> - **Airport** - C'est une classe qui crée un aéroport et elle contient son type, un *tower* et une vecteur de *Terminal*   
+> - **Terminal** - 
+
 Pour les classes `Tower`, `Aircaft`, `Airport` et `Terminal`, listez leurs fonctions-membre publiques et expliquez précisément à quoi elles servent.
 Réalisez ensuite un schéma présentant comment ces différentes classes intéragissent ensemble.
 
@@ -34,6 +38,12 @@ Expliquez les intérêts de ce choix.
 Le Concorde est censé pouvoir voler plus vite que les autres avions.
 Modifiez le programme pour tenir compte de cela.
 
+> Les avions ont crée dans ``aricraft_type``. 
+> il suffit de changer la vittesse de l'avion *Concorde* à la création
+        
+    aircraft_types[2] = new AircraftType { .02f, .09f, .02f, MediaPath { "concorde_af.png" } };
+
+
 2) Identifiez quelle variable contrôle le framerate de la simulation.
 Ajoutez deux nouveaux inputs au programme permettant d'augmenter ou de diminuer cette valeur.
 Essayez maintenant de mettre en pause le programme en manipulant ce framerate. Que se passe-t-il ?\
@@ -44,10 +54,17 @@ Ajoutez une nouvelle fonctionnalité au programme pour mettre le programme en pa
 4) Lorsqu'un avion a décollé, il réattérit peu de temps après.
 Faites en sorte qu'à la place, il soit retiré du programme.\
 Indices :\
-A quel endroit pouvez-vous savoir que l'avion doit être supprimé ?\
-Pourquoi n'est-il pas sûr de procéder au retrait de l'avion dans cette fonction ?
-A quel endroit de la callstack pourriez-vous le faire à la place ?\
-Que devez-vous modifier pour transmettre l'information de la première à la seconde fonction ?
+    1. A quel endroit pouvez-vous savoir que l'avion doit être supprimé ?\
+        > Dans ```aircraft::move()```.
+    2. Pourquoi n'est-il pas sûr de procéder au retrait de l'avion dans cette fonction ?
+        > il faut rétirer move_deqeue , parce que il va être appelé sur un avion déjà supprimé
+        > foreach cassé
+    3. A quel endroit de la callstack pourriez-vous le faire à la place ?\
+        > timer()
+    4. Que devez-vous modifier pour transmettre l'information de la première à la seconde fonction ?
+        > il faut changer la signature de move() pour qu'il retourne l'information
+        >Parcontre la fonction move() est une fonction virtual, qui hérite de ``DynamicObjects``. Donc il faut changer la signature 
+
 
 5) Lorsqu'un objet de type `Displayable` est créé, il faut ajouter celui-ci manuellement dans la liste des objets à afficher.
 Il faut également penser à le supprimer de cette liste avant de le détruire.

@@ -52,6 +52,7 @@ void TowerSimulation::create_random_aircraft() const
 void TowerSimulation::create_keystrokes() const
 {
     GL::keystrokes.emplace('x', []() { GL::exit_loop(); });
+    GL::keystrokes.emplace('p', []() { GL::pause(); });
     GL::keystrokes.emplace('q', []() { GL::exit_loop(); });
     GL::keystrokes.emplace('c', [this]() { create_random_aircraft(); });
     GL::keystrokes.emplace('+', []() { GL::change_zoom(0.95f); });
