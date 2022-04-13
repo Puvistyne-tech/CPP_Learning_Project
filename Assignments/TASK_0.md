@@ -97,7 +97,7 @@ Essayez maintenant de mettre en pause le programme en manipulant ce framerate. Q
 Ajoutez une nouvelle fonctionnalité au programme pour mettre le programme en pause, et qui ne passe pas par le framerate.
 
 > **GL::tick_per_frame** initialise avec **config::DEFAULT_TICKS_PER_SEC**.
-> ajout de 2 inputs : **F** pour incrémenter de 1 le framerate et **Ctrl+F** pour décrémenter de 1 le framerate.
+> ajout de 2 inputs : **i** pour incrémenter de 1 le framerate et **d** pour décrémenter de 1 le framerate.
 > Si tick_per_sec passe à 0, dans la fonction *``GL::timer``* il y a une division par **0**  
 > Pour ajouter la pause, j'ajoute encore un input **p** permettant de passer entre le framerate = 0 et
 > celui qu'il y avait avant la pause (ajout d'une variable statique)
@@ -105,7 +105,7 @@ Ajoutez une nouvelle fonctionnalité au programme pour mettre le programme en pa
 3) Identifiez quelle variable contrôle le temps de débarquement des avions et doublez-le.
 > config::SERVICE_CYCLES -> 40u
 
-4) Lorsqu'un avion a décollé, il réattérit peu de temps après.
+4) Lorsqu'un avion a décollé, il réatterrit peu de temps après.
 Assurez-vous qu'à la place, il soit supprimé de la `move_queue`.\
 Pour tester, il suffit de dézoomer et de vérifier que les avions suffisamment éloignés ne bougent plus.
 Indices :\

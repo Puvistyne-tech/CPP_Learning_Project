@@ -73,9 +73,26 @@ void display(void)
 
 void timer(const int step)
 {
-    for (auto& item : move_queue)
+    // TASK_0 C-2: pause.
+    if (!isPaused)
     {
-        item->move();
+        // TASK_0 C-4: remove aircrafts
+        // We need to replace the foreach with a for with iterator,
+        // because we are going to modify the container while iterating
+        // through it.
+        for (auto it = move_queue.begin(); it != move_queue.end();)
+        {
+            auto* dynamic_obj = *it;
+            if (dynamic_obj->move())
+            {
+                ++it;
+            }
+            else
+            {
+                it = move_queue.erase(it); // suprime
+                delete dynamic_obj;        // free en C
+            }
+        }
     }
     glutPostRedisplay();
     glutTimerFunc(1000u / ticks_per_sec, timer, step + 1);
@@ -113,4 +130,17 @@ void exit_loop()
     glutLeaveMainLoop();
 }
 
+// TASK0
+void pause()
+{
+    isPaused = !isPaused;
+}
+
+void increaseFrames(){
+    ticks_per_sec = std::min(ticks_per_sec + 1u, 180u);
+}
+
+void decreaseFrames(){
+    ticks_per_sec = std::max(ticks_per_sec - 1u, 1u);
+}
 } // namespace GL

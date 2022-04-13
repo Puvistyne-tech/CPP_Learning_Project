@@ -22,6 +22,9 @@ inline unsigned int ticks_per_sec = DEFAULT_TICKS_PER_SEC;
 inline float zoom                 = DEFAULT_ZOOM;
 inline bool fullscreen            = false;
 
+//TASK0
+inline bool isPaused=false;
+
 using KeyStroke = std::function<void(void)>;
 
 inline std::unordered_map<char, KeyStroke> keystrokes;
@@ -34,4 +37,8 @@ void init_gl(int argc, char** argv, const char* title);
 void loop();
 void exit_loop();
 
+//TASK0
+void pause();
+void increaseFrames();
+void decreaseFrames();
 } // namespace GL
