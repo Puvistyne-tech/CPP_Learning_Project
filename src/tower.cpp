@@ -62,7 +62,34 @@ WaypointQueue Tower::get_instructions(Aircraft& aircraft)
 
 void Tower::arrived_at_terminal(const Aircraft& aircraft)
 {
-    const auto it=reserved_terminals.find(&aircraft);
+    const auto it = reserved_terminals.find(&aircraft);
     assert(it != reserved_terminals.end());
     airport.get_terminal(it->second).start_service(aircraft);
+}
+
+void Tower::release_terminal_if_reserved(Aircraft* aircraft)
+{
+    const auto it = reserved_terminals.find(aircraft);
+    if (it == reserved_terminals.end())
+        return;
+    std::cout << "release following a crash" << std::endl;
+    const auto terminal_num = it->second;
+    Terminal& terminal      = airport.get_terminal(terminal_num);
+    terminal.releaseTerminal();
+    reserved_terminals.erase(it);
+}
+WaypointQueue Tower::reserve_terminal(Aircraft& aircraft)
+{
+    if (!aircraft.is_at_terminal)
+    {
+        // try and reserve a terminal for the craft to land
+        const auto vp = airport.reserve_terminal(aircraft);
+        if (!vp.first.empty())
+        {
+            reserved_terminals.emplace(&aircraft, vp.second);
+            return vp.first;
+        }
+    }
+
+    return {};
 }

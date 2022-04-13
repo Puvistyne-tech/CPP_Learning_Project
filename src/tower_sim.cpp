@@ -10,6 +10,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <ctime>
+#include <algorithm>
 
 using namespace std::string_literals;
 
