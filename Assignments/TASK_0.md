@@ -21,10 +21,6 @@ Que fait chacun des avions ?
 Listez les classes du programme à la racine du dossier src/.
 Pour chacune d'entre elle, expliquez ce qu'elle représente et son rôle dans le programme.
 
-> - **Aircraft** - C'est une classe sert à la création des avions. Elle aussi sert à gérer les avions, son vitesse, son type, landed etc.
-> - **Airport** - C'est une classe qui crée un aéroport et elle contient son type, un *tower* et une vecteur de *Terminal*   
-> - **Terminal** - 
-
 Pour les classes `Tower`, `Aircaft`, `Airport` et `Terminal`, listez leurs fonctions-membre publiques et expliquez précisément à quoi elles servent.
 Réalisez ensuite un schéma présentant comment ces différentes classes intéragissent ensemble.
 
@@ -38,13 +34,8 @@ Expliquez les intérêts de ce choix.
 Le Concorde est censé pouvoir voler plus vite que les autres avions.
 Modifiez le programme pour tenir compte de cela.
 
-> Les avions ont crée dans ``aricraft_type``. 
-> il suffit de changer la vittesse de l'avion *Concorde* à la création
-        
-    aircraft_types[2] = new AircraftType { .02f, .09f, .02f, MediaPath { "concorde_af.png" } };
-
-
-2) Identifiez quelle variable contrôle le framerate de la simulation.
+2) Identifiez quelle variable contrôle le framerate de la simulation.\
+Le framerate correspond au temps de rafraichissement du programme, c'est-à-dire le nombre de fois où les éléments du programme seront mis à jour (ajout de nouvel avion à la simulation, déplacement, etc) en une seconde.\
 Ajoutez deux nouveaux inputs au programme permettant d'augmenter ou de diminuer cette valeur.
 Essayez maintenant de mettre en pause le programme en manipulant ce framerate. Que se passe-t-il ?\
 Ajoutez une nouvelle fonctionnalité au programme pour mettre le programme en pause, et qui ne passe pas par le framerate.
@@ -52,24 +43,19 @@ Ajoutez une nouvelle fonctionnalité au programme pour mettre le programme en pa
 3) Identifiez quelle variable contrôle le temps de débarquement des avions et doublez-le.
 
 4) Lorsqu'un avion a décollé, il réattérit peu de temps après.
-Faites en sorte qu'à la place, il soit retiré du programme.\
+Assurez-vous qu'à la place, il soit supprimé de la `move_queue`.\
+Pour tester, il suffit de dézoomer et de vérifier que les avions suffisament éloignés ne bougent plus.
 Indices :\
-    1. A quel endroit pouvez-vous savoir que l'avion doit être supprimé ?\
-        > Dans ```aircraft::move()```.
-    2. Pourquoi n'est-il pas sûr de procéder au retrait de l'avion dans cette fonction ?
-        > il faut rétirer move_deqeue , parce que il va être appelé sur un avion déjà supprimé
-        > foreach cassé
-    3. A quel endroit de la callstack pourriez-vous le faire à la place ?\
-        > timer()
-    4. Que devez-vous modifier pour transmettre l'information de la première à la seconde fonction ?
-        > il faut changer la signature de move() pour qu'il retourne l'information
-        >Parcontre la fonction move() est une fonction virtual, qui hérite de ``DynamicObjects``. Donc il faut changer la signature 
-
+A quel endroit pouvez-vous savoir que l'avion doit être supprimé ?\
+Pourquoi n'est-il pas sûr de procéder au retrait de l'avion dans cette fonction ?
+A quel endroit de la callstack pourriez-vous le faire à la place ?\
+Que devez-vous modifier pour transmettre l'information de la première à la seconde fonction ?
 
 5) Lorsqu'un objet de type `Displayable` est créé, il faut ajouter celui-ci manuellement dans la liste des objets à afficher.
 Il faut également penser à le supprimer de cette liste avant de le détruire.
-Faites en sorte que l'ajout et la suppression de `display_queue` soit "automatiquement gérée" lorsqu'un `Displayable` est créé ou détruit.
-Pourquoi n'est-il pas spécialement pertinent d'en faire de même pour `DynamicObject` ?
+Faites en sorte que l'ajout et la suppression de `display_queue` soit "automatiquement gérée" lorsqu'un `Displayable` est créé ou détruit.\
+Essayez maintenant de supprimer complètement l'avion du programme lorsque vous le retirez de la `move_queue`.\
+En dézoomant, vous devriez maintenant constater que les avions disparaissent maintenant de l'écran.
 
 6) La tour de contrôle a besoin de stocker pour tout `Aircraft` le `Terminal` qui lui est actuellement attribué, afin de pouvoir le libérer une fois que l'avion décolle.
 Cette information est actuellement enregistrée dans un `std::vector<std::pair<const Aircraft*, size_t>>` (size_t représentant l'indice du terminal).
@@ -81,8 +67,8 @@ Modifiez le code afin d'utiliser un conteneur STL plus adapté. Normalement, à 
 
 1) Comment a-t-on fait pour que seule la classe `Tower` puisse réserver un terminal de l'aéroport ?
 
-2) En regardant le contenu de la fonction `void Aircraft::turn(Point3D direction)`, pourquoi selon-vous ne sommes-nous pas passer par une réference ?
-Pensez-vous qu'il soit possible d'éviter la copie du `Point3D` passé en paramètre ?
+2) En regardant le contenu de la fonction `void Aircraft::turn(Point3D direction)`, pourquoi selon-vous ne sommes-nous pas passer par une réference constante ?
+Pourquoi n'est-il pas possible d'éviter la copie du `Point3D` passé en paramètre ?
 
 ## E- Bonus
 
