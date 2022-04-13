@@ -6,27 +6,80 @@ Compilez et lancez le programme.
 
 Allez dans le fichier `tower_sim.cpp` et recherchez la fonction responsable de gérer les inputs du programme.
 Sur quelle touche faut-il appuyer pour ajouter un avion ?
+>c 
+ 
 Comment faire pour quitter le programme ?
+> q ou x
+
 A quoi sert la touche 'F' ?
+> Toggle fullscreen mode
+
 
 Ajoutez un avion à la simulation et attendez.
 Que est le comportement de l'avion ?
+>A plane can fly, Land to a Terminal for servicing and it can take off 
+> 
 Quelles informations s'affichent dans la console ?
-
+> *  Aircraft Landing and Take off information
+> * Terminal servicing information (start/stop)
+> 
 Ajoutez maintenant quatre avions d'un coup dans la simulation.
 Que fait chacun des avions ?
+> Since the airport has only three terminals, only three planes can be served by the 
+> airport simultaneously. The fourth aircraft had to wait for a free terminal
 
 ## B- Analyse du code
 
 Listez les classes du programme à la racine du dossier src/.
 Pour chacune d'entre elle, expliquez ce qu'elle représente et son rôle dans le programme.
-
+>
+> Aircraft : C'est un avion  
+> Airport : C'est l'aéroport  
+> AirportType : Fournit la position des éléments de l'aéroport  
+> Terminal : Prend un aircraft et s'occupe de lui pendant un certain temps  
+> Tower : Donne les instructions aux avions.  
+> TowerSimulation : Gère les actions utilisateur  
+> Waypoint : Représente un point en 3D ayant une connaissance de s'il est au sol ou non
+> 
 Pour les classes `Tower`, `Aircaft`, `Airport` et `Terminal`, listez leurs fonctions-membre publiques et expliquez précisément à quoi elles servent.
 Réalisez ensuite un schéma présentant comment ces différentes classes intéragissent ensemble.
 
+> Tower :
+> * get_instructions(Aircraft&) : Génère des instructions pour l'avion
+> * arrived_at_terminal(Aircraft&) : Récupère le terminal sur lequel doit se poser l'avions et ensuite lui donne l'avion
+>
+> Aircraft :
+> * get_flight_num() : Renvoi le numéro de vol de cet avion
+> * distance_to(): Renvoi la distance entre cet avion et un point
+> * display() : Affiche l'avion
+> * move() : Met à jour la position de l'avion
+>
+> Airport :
+> * get_tower() : Renvoi la tour de control
+> * display() : Affiche l'aéroport
+> * move() : fait bouger tous les terminaux
+>
+> Terminal :
+> * in_use() : Renvoi true s'il est en cours d'utilisation
+> * is_servicing() : Renvoi true tant qu'il n'a pas fini de s'occuper de l'avion
+> * assign_craft() : Assigne un nouvel avions
+> * start_service() : Affiche un message et commence à s'occuper de l'avion
+> * finish_service() : Affiche un message et supprime sa ref sur l'avion
+> * move() : Ajoute 1 au compteur de traitement de l'avion
+
 Quelles classes et fonctions sont impliquées dans la génération du chemin d'un avion ?
+> On commence dans Aircraft::move() qui appel
+> Tower::get_instruction() si il n'a plus de waypoints
+> Ensuite appel essaie de reserver un terminal avec Airport::reserve_terminal()
+> qui appel Terminal::assign_craft() si c'est réussi et met à jour le chemin de l'avion  
+> sinon assigne un nouveau chemin aérien à l'avion
+> Dans le cas où l'avion est dans un terminal si l'avion a fini d'etre servit,
+> retire l'avion/terminal des reservations et fait repartir l'avion
+> 
 Quel conteneur de la librairie standard a été choisi pour représenter le chemin ?
 Expliquez les intérêts de ce choix.
+> une queue parce qu'on veut ajouter des points à la fin et pouvoir les récupérer à partir du début
+
 
 ## C- Bidouillons !
 
@@ -34,30 +87,40 @@ Expliquez les intérêts de ce choix.
 Le Concorde est censé pouvoir voler plus vite que les autres avions.
 Modifiez le programme pour tenir compte de cela.
 
+> AircraftTypes: changer le 2ème paramètre(``max_air_speed``) de à .2f
+
+
 2) Identifiez quelle variable contrôle le framerate de la simulation.\
 Le framerate correspond au temps de rafraichissement du programme, c'est-à-dire le nombre de fois où les éléments du programme seront mis à jour (ajout de nouvel avion à la simulation, déplacement, etc) en une seconde.\
 Ajoutez deux nouveaux inputs au programme permettant d'augmenter ou de diminuer cette valeur.
 Essayez maintenant de mettre en pause le programme en manipulant ce framerate. Que se passe-t-il ?\
 Ajoutez une nouvelle fonctionnalité au programme pour mettre le programme en pause, et qui ne passe pas par le framerate.
 
+> **GL::tick_per_frame** initialise avec **config::DEFAULT_TICKS_PER_SEC**.
+> ajout de 2 inputs : **F** pour incrémenter de 1 le framerate et **Ctrl+F** pour décrémenter de 1 le framerate.
+> Si tick_per_sec passe à 0, dans la fonction *``GL::timer``* il y a une division par **0**  
+> Pour ajouter la pause, j'ajoute encore un input **p** permettant de passer entre le framerate = 0 et
+> celui qu'il y avait avant la pause (ajout d'une variable statique)
+
 3) Identifiez quelle variable contrôle le temps de débarquement des avions et doublez-le.
+> config::SERVICE_CYCLES -> 40u
 
 4) Lorsqu'un avion a décollé, il réattérit peu de temps après.
 Assurez-vous qu'à la place, il soit supprimé de la `move_queue`.\
-Pour tester, il suffit de dézoomer et de vérifier que les avions suffisament éloignés ne bougent plus.
+Pour tester, il suffit de dézoomer et de vérifier que les avions suffisamment éloignés ne bougent plus.
 Indices :\
-A quel endroit pouvez-vous savoir que l'avion doit être supprimé ?\
-Pourquoi n'est-il pas sûr de procéder au retrait de l'avion dans cette fonction ?
-A quel endroit de la callstack pourriez-vous le faire à la place ?\
-Que devez-vous modifier pour transmettre l'information de la première à la seconde fonction ?
+A quel endroit pouvez-vous savoir que l'avion doit être supprimé ? ``> Aircraft::move``\
+Pourquoi n'est-il pas sûr de procéder au retrait de l'avion dans cette fonction ? ``> parce que le seul qui own les avions est GL::move_queue``
+A quel endroit de la callstack pourriez-vous le faire à la place ?\ ``> GL::timer``
+Que devez-vous modifier pour transmettre l'information de la première à la seconde fonction ? ```un boolean```
 
-5) Lorsqu'un objet de type `Displayable` est créé, il faut ajouter celui-ci manuellement dans la liste des objets à afficher.
+6) Lorsqu'un objet de type `Displayable` est créé, il faut ajouter celui-ci manuellement dans la liste des objets à afficher.
 Il faut également penser à le supprimer de cette liste avant de le détruire.
 Faites en sorte que l'ajout et la suppression de `display_queue` soit "automatiquement gérée" lorsqu'un `Displayable` est créé ou détruit.\
 Essayez maintenant de supprimer complètement l'avion du programme lorsque vous le retirez de la `move_queue`.\
 En dézoomant, vous devriez maintenant constater que les avions disparaissent maintenant de l'écran.
 
-6) La tour de contrôle a besoin de stocker pour tout `Aircraft` le `Terminal` qui lui est actuellement attribué, afin de pouvoir le libérer une fois que l'avion décolle.
+7) La tour de contrôle a besoin de stocker pour tout `Aircraft` le `Terminal` qui lui est actuellement attribué, afin de pouvoir le libérer une fois que l'avion décolle.
 Cette information est actuellement enregistrée dans un `std::vector<std::pair<const Aircraft*, size_t>>` (size_t représentant l'indice du terminal).
 Cela fait que la recherche du terminal associé à un avion est réalisée en temps linéaire, par rapport au nombre total de terminaux.
 Cela n'est pas grave tant que ce nombre est petit, mais pour préparer l'avenir, on aimerait bien remplacer le vector par un conteneur qui garantira des opérations efficaces, même s'il y a beaucoup de terminaux.\
