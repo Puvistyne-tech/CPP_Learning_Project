@@ -150,3 +150,7 @@ Passez ensuite cette valeur à la fonction `move` des `DynamicObject`, et utilis
 Vérifiez maintenant en exécutant le programme que, lorsque augmentez le framerate du programme, vous n'augmentez pas la vitesse de la simulation.
 
 Ajoutez ensuite deux nouveaux inputs permettant d'accélérer ou de ralentir la simulation.
+
+> Vu qu'on a modifié la class Displayable, C'est lui qui occupé la création et la destruction des displayables, 
+> Donc, on n'a plus besoin de l'appeler (ajouter et retirer) dans la class Tower_sim.cpp lors de la création 
+> d'aéroport et des aircraft.

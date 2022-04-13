@@ -7,8 +7,8 @@ namespace GL {
 
 // a displayable object can be displayed and has a z-coordinate indicating who
 // is displayed before whom ;]
-class Displayable;
-inline std::vector<const Displayable*> display_queue;
+//class Displayable;
+//inline std::vector<const Displayable*> display_queue;
 
 class Displayable
 {
@@ -16,8 +16,7 @@ protected:
     float z = 0;
 
 public:
-    explicit Displayable(const float z_) : z { z_ } { display_queue.emplace_back(this); }
-
+    Displayable(const float z_) : z { z_ } { display_queue.emplace_back(this); }
     virtual ~Displayable()
     {
         display_queue.erase(std::find(display_queue.begin(), display_queue.end(), this));
@@ -25,8 +24,8 @@ public:
 
     virtual void display() const = 0;
 
-    [[nodiscard]] float get_z() const { return z; }
-//    static inline std::vector<const Displayable*> display_queue;
+    float get_z() const { return z; }
+    static inline std::vector<const Displayable*> display_queue;
 };
 
 struct disp_z_cmp
