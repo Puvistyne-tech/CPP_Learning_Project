@@ -135,20 +135,11 @@ void pause()
 
 void increaseFrames()
 {
-    ticks_per_sec++;
-    //    ticks_per_sec = std::min(ticks_per_sec + 1u, 180u);
+        ticks_per_sec = std::min(ticks_per_sec + 1u, 180u);
 }
 
 void decreaseFrames()
 {
-    //    ticks_per_sec = std::max(ticks_per_sec - 1u, 1u);
-    if (ticks_per_sec == 1)
-    {
-        ticks_per_sec = 1;
-    }
-    else
-    {
-        ticks_per_sec--;
-    }
+        ticks_per_sec = std::max(ticks_per_sec - 1u, 1u);
 }
 } // namespace GL
