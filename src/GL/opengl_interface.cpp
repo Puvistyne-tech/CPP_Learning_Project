@@ -77,9 +77,6 @@ void timer(const int step)
     if (!isPaused)
     {
         // TASK_0 C-4: remove aircrafts
-        // We need to replace the foreach with a for with iterator,
-        // because we are going to modify the container while iterating
-        // through it.
         for (auto it = move_queue.begin(); it != move_queue.end();)
         {
             auto* dynamic_obj = *it;
@@ -136,11 +133,22 @@ void pause()
     isPaused = !isPaused;
 }
 
-void increaseFrames(){
-    ticks_per_sec = std::min(ticks_per_sec + 1u, 180u);
+void increaseFrames()
+{
+    ticks_per_sec++;
+    //    ticks_per_sec = std::min(ticks_per_sec + 1u, 180u);
 }
 
-void decreaseFrames(){
-    ticks_per_sec = std::max(ticks_per_sec - 1u, 1u);
+void decreaseFrames()
+{
+    //    ticks_per_sec = std::max(ticks_per_sec - 1u, 1u);
+    if (ticks_per_sec == 1)
+    {
+        ticks_per_sec = 1;
+    }
+    else
+    {
+        ticks_per_sec--;
+    }
 }
 } // namespace GL

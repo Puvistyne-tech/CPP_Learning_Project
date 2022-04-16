@@ -139,6 +139,8 @@ Modifiez le code afin d'utiliser un conteneur STL plus adapté. Normalement, à 
 
 2) En regardant le contenu de la fonction `void Aircraft::turn(Point3D direction)`, pourquoi selon-vous ne sommes-nous pas passer par une réference constante ?
 Pourquoi n'est-il pas possible d'éviter la copie du `Point3D` passé en paramètre ?
+> Parce qu'on veut appliquer un traitement à `direction` avant de l'ajouter à la vitesse.
+> C'est possible, mais pour ça il faudrait faire les traitements différamment.
 
 ## E- Bonus
 
