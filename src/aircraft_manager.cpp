@@ -3,7 +3,11 @@
 //
 
 #include "aircraft_manager.hpp"
-void AircraftManager::add(std::unique_ptr<Aircraft> aircraft)
+AircraftManager::AircraftManager()
+{
+    GL::move_queue.emplace(this);
+}
+void AircraftManager::add_aircraft(std::unique_ptr<Aircraft> aircraft)
 {
     assert(aircraft);
     aircrafts.emplace_back(std::move(aircraft));

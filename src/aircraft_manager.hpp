@@ -17,11 +17,11 @@ private:
     std::vector<std::unique_ptr<Aircraft>> aircrafts;
 
 public:
-    //    aircraft_manager();//Constructeur base
-    //    ~aircraft_manager();//Destructeur
-    //    aircraft_manager(const aircraft_manager&)=delete;
-    //    aircraft_manager& operator=(const aircraft_manager&)=delete;
+    AircraftManager();                       // Base Constructor
+    ~AircraftManager() override = default;   // Destructor
+    AircraftManager(const AircraftManager&) = delete;
+    AircraftManager& operator=(const AircraftManager&) = delete;
 
-    void add(std::unique_ptr<Aircraft> aircraft);
+    void add_aircraft(std::unique_ptr<Aircraft>);
     bool move() override;
 };

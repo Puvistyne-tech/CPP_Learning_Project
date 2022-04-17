@@ -12,7 +12,9 @@ private:
     Airport* airport = nullptr;
     // TASK 1
     AircraftManager aircraft_manager;
-    AircraftFactory factory;
+    std::unique_ptr<AircraftFactory> factory;
+
+    std::string data_path;
 
     TowerSimulation(const TowerSimulation&)            = delete;
     TowerSimulation& operator=(const TowerSimulation&) = delete;
@@ -22,7 +24,7 @@ private:
 
     void init_airport();
     [[nodiscard]] std::unique_ptr<Aircraft> create_aircraft(const AircraftType& type) const;
-    [[nodiscard]] std::unique_ptr<Aircraft> create_random_aircraft() const;
+    void create_random_aircraft();
 
 public:
     TowerSimulation(int argc, char** argv);

@@ -7,6 +7,9 @@
 #include "img/image.hpp"
 #include "img/media_path.hpp"
 
+#include "aircraft_factory.hpp"
+
+
 #include <algorithm>
 #include <cassert>
 #include <cstdlib>
@@ -18,11 +21,12 @@ TowerSimulation::TowerSimulation(int argc, char** argv) :
     help { (argc > 1) && (std::string { argv[1] } == "--help"s || std::string { argv[1] } == "-h"s) }
 {
     MediaPath::initialize(argv[0]);
+    data_path = help && argc > 2 ? argv[2] : argc > 1 ? argv[1] : "";
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
     GL::init_gl(argc, argv, "Airport Tower Simulation");
 
-    create_keystrokes();
     GL::move_queue.emplace(&aircraft_manager);
+    create_keystrokes();
 }
 
 TowerSimulation::~TowerSimulation()
@@ -35,7 +39,7 @@ void TowerSimulation::create_keystrokes()
     GL::keystrokes.emplace('x', []() { GL::exit_loop(); });
     GL::keystrokes.emplace('q', []() { GL::exit_loop(); });
     GL::keystrokes.emplace('c', [this]()
-                           { factory.create_random_aircraft(airport->get_tower(), aircraft_manager); });
+                           { create_random_aircraft(); });
     GL::keystrokes.emplace('+', []() { GL::change_zoom(0.95f); });
     GL::keystrokes.emplace('-', []() { GL::change_zoom(1.05f); });
     GL::keystrokes.emplace('f', []() { GL::toggle_fullscreen(); });
@@ -79,7 +83,13 @@ void TowerSimulation::launch()
     }
 
     init_airport();
-    factory.init_aircraft_types();
+    factory=data_path.empty() ? std::make_unique<AircraftFactory>() : AircraftFactory::LoadTypes(MediaPath {data_path});
+//    factory.init_aircraft_types();
 
     GL::loop();
+}
+void TowerSimulation::create_random_aircraft()
+{
+    assert(airport); // make sure the airport is initialized before creating aircraft
+    aircraft_manager.add_aircraft(factory->create_aircraft(airport->get_tower()));
 }
