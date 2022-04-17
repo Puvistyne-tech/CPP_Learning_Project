@@ -22,8 +22,9 @@ for (const auto& wp: control.get_instructions(*this))
 
 2. Modifiez `Aircraft::add_waypoint` afin que l'évaluation du flag ait lieu à la compilation et non à l'exécution.
 Que devez-vous changer dans l'appel de la fonction pour que le programme compile ?
+> ````add_waypoint<front>(wp);````
 
-3. **BONUS** En utilisant [GodBolt](https://godbolt.org/), comparez le code-assembleur généré par les fonctions suivantes:
+4. **BONUS** En utilisant [GodBolt](https://godbolt.org/), comparez le code-assembleur généré par les fonctions suivantes:
 <table border="0">
  <tr>
     <td><pre lang="c++">
@@ -39,6 +40,7 @@ Que devez-vous changer dans l'appel de la fonction pour que le programme compile
     </pre></td>
  </tr>
 </table>
+/
 
 > Si minmax n'est pas utilisé le compilateur ne génère pas le code de la template. Pour chaque cas de la template 
 > (donc là 2) s'il sont utilisé, une nouvelle fonction est créée. 
@@ -65,8 +67,6 @@ Vérifiez que votre programme compile et fonctionne comme avant.
 4. Dans la fonction `test_generic_points`, essayez d'instancier un `Point2D` avec 3 arguments.
 Que se passe-t-il ?
 Comment pourriez-vous expliquer que cette erreur ne se produise que maintenant ?
-> J'ai pas la réponse parce que je suis passé trop vite sur cette question mais je suppose que ça asseyait de créer un 
-> Point2D avec 3 arguments donc erreur de compilation alors qu'avant ça appelait le constructeur à 3 arguments.
 
 5. Que se passe-t-il maintenant si vous essayez d'instancier un `Point3D` avec 2 arguments ?
 Utilisez un `static_assert` afin de vous assurez que personne ne puisse initialiser un `Point3D` avec seulement deux éléments.
@@ -76,7 +76,5 @@ Faites en de même dans les fonctions `y()` et `z()`, pour vérifier que l'on ne
 Vous conserverez bien entendu le `static_assert` pour vérifier que le nombre d'arguments passés correspond bien à la dimension du `Point`.\
 En faisant ça, vous aurez peut-être désormais des problèmes avec la copie des `Point`.
 Que pouvez-vous faire pour supprimer l'ambiguité ?
-> Ajouter un paramètre (T) avant l'argument variadic pour forcer le fait que ce ne soit pas un Point
 
 7. **BONUS** En utilisant SFINAE, faites en sorte que le template `Point` ne puisse être instancié qu'avec des types [arithmétiques](https://en.cppreference.com/w/cpp/types/is_arithmetic).
-> std::enable_if_t<(std::is_arithmetic<std::remove_reference_t<T>>::value && ...), int>
