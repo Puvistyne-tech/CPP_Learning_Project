@@ -133,12 +133,12 @@ void pause()
     isPaused = !isPaused;
 }
 
-void increaseFrames()
+void increase_frames()
 {
         ticks_per_sec = std::min(ticks_per_sec + 1u, 180u);
 }
 
-void decreaseFrames()
+void decrease_frames()
 {
         ticks_per_sec = std::max(ticks_per_sec - 1u, 1u);
 }

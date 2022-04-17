@@ -6,6 +6,7 @@
 
 `TowerSimulation::display_help()` est chargé de l'affichage des touches disponibles.
 Dans sa boucle, remplacez `const auto& ks_pair` par un structured binding adapté.
+> On peut utiliser `const auto& [key, action]` 
 
 Si vous ne savez plus ce qu'est un structured binding, le [chapitre 6](https://laefy.github.io/CPP_Learning/chapter6/1-searches/) est votre ami (Google aussi d'ailleurs).
 
@@ -20,6 +21,9 @@ Remplacez votre boucle avec un appel à `std::remove_if`.
 2. Pour des raisons de statistiques, on aimerait bien être capable de compter tous les avions de chaque airline.
 A cette fin, rajoutez des callbacks sur les touches `0`..`7` de manière à ce que le nombre d'avions appartenant à `airlines[x]` soit affiché en appuyant sur `x`.
 Rendez-vous compte de quelle classe peut acquérir cet information. Utilisez la bonne fonction de `<algorithm>` pour obtenir le résultat.
+> La classe pouvant compter les avions appartenant à une ligne est AircraftManager. J'utilise std::count_if pour compter
+> les avions dont la ligne commence par le code de l'airline
+
 
 ### C - Relooking de Point3D
 
@@ -29,8 +33,11 @@ Remplacez le tableau `Point3D::values` par un `std::array` et puis,
 remplacez le code des fonctions suivantes en utilisant des fonctions de `<algorithm>` / `<numeric>`:
 
 1. `Point3D::operator*=(const float scalar)`
+> Utilisation de std::transform(src_start, src_end, dest_start, fnct)
 2. `Point3D::operator+=(const Point3D& other)` et `Point3D::operator-=(const Point3D& other)`
+> Utilisation de std::transform(src1_start, src1_end, src2_start, dest_start, fnct)
 3. `Point3D::length() const`
+> Utilisation de std::accumulate(start, end, initial_value, fnct)
 
 ---
 
@@ -46,6 +53,7 @@ La notation tiendra compte de votre utilisation judicieuse de la librairie stand
 Ajoutez un attribut `fuel` à `Aircraft`, et initialisez-le à la création de chaque avion avec une valeur aléatoire comprise entre `150` et `3'000`.\
 Décrémentez cette valeur dans `Aircraft::move` si l'avion est en vol.\
 Lorsque cette valeur atteint 0, affichez un message dans la console pour indiquer le crash, et faites en sorte que l'avion soit supprimé du manager.
+> Suppression -> retourner `true` dans move/update
 
 N'hésitez pas à adapter la borne `150` - `3'000`, de manière à ce que des avions se crashent de temps en temps.
 
@@ -102,6 +110,7 @@ Afin de pouvoir repartir en toute sécurité, les avions avec moins de `200` uni
 Modifiez le code de `Terminal` afin que les avions qui n'ont pas suffisamment d'essence restent bloqués.\
 Testez votre programme pour vérifier que certains avions attendent bien indéfiniment au terminal.
 Si ce n'est pas le cas, essayez de faire varier la constante `200`.
+> Ca fonctionne bien.
 
 2. Dans `AircraftManager`, implémentez une fonction `get_required_fuel`, qui renvoie la somme de l'essence manquante (le plein, soit `3'000`, moins la quantité courante d'essence) pour les avions vérifiant les conditions suivantes :\
 \- l'avion est bientôt à court d'essence\
@@ -119,14 +128,20 @@ Indiquez dans la console quel avion a été réapprovisionné ainsi que la quant
 5. Définissez maintenant une fonction `refill_aircraft_if_needed` dans la classe `Terminal`, prenant un paramètre `fuel_stock` par référence non-constante.
 Elle devra appeler la fonction `refill` sur l'avion actuellement au terminal, si celui-ci a vraiment besoin d'essence.  
 
-6. Modifiez la fonction `Airport::move`, afin de mettre-en-oeuvre les étapes suivantes.\
+6. Modifiez la fonction `Aircraft::update`, afin de mettre-en-oeuvre les étapes suivantes.\
 \- Si `next_refill_time` vaut 0 :\
-    \* `fuel_stock` est incrémenté de la valeur de `ordered_fuel`.\
+    \* `fuel_stock` est incrémenté de la valeur de `ordered_full`.\
     \* `ordered_fuel` est recalculé en utilisant le minimum entre `AircraftManager::get_required_fuel()` et `5'000` (il s'agit du volume du camion citerne qui livre le kérosène).\
     \* `next_refill_time` est réinitialisé à `100`.\
     \* La quantité d'essence reçue, la quantité d'essence en stock et la nouvelle quantité d'essence commandée sont affichées dans la console.\
 \- Sinon `next_refill_time` est décrémenté.\
-\- Chaque terminal réapprovisionne son avion s'il doit l'être.
+\- Les avions de chacun des terminaux sont réapprovionnés s'ils doivent l'être.
+> Le ""soucis"" de çette façon de faire c'est que du coup on commande beaucoup de surplus 
+> par rapport à ce qu'on utilise vu que au début beaucoup d'avions ont besoin de fuel mais 
+> que le temps qu'ils attérissent, soient traité et reparte on a déjà commandé le prochain
+> camion citerne. La façon de corriger ça serait de garder en mémoire ceux ayant déjà indiqué 
+> leur besoin en fuel pour ne pas les commander la prochaine fois (ce que je n'ai pas fait)
+
 
 ### E - Déréservation
 

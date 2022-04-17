@@ -39,6 +39,6 @@ void exit_loop();
 
 //TASK0
 void pause();
-void increaseFrames();
-void decreaseFrames();
+void increase_frames();
+void decrease_frames();
 } // namespace GL

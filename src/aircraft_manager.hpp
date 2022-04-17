@@ -22,6 +22,6 @@ public:
     //    aircraft_manager(const aircraft_manager&)=delete;
     //    aircraft_manager& operator=(const aircraft_manager&)=delete;
 
-    void add_aircraft(std::unique_ptr<Aircraft> aircraft);
+    void add(std::unique_ptr<Aircraft> aircraft);
     bool move() override;
 };
