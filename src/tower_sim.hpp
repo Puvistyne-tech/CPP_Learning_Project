@@ -11,7 +11,7 @@ private:
     bool help        = false;
     Airport* airport = nullptr;
     // TASK 1
-    AircraftManager aircraft_manager;
+//    AircraftManager aircraft_manager;
     std::unique_ptr<AircraftFactory> factory;
     std::unique_ptr<AircraftManager> manager;
 
@@ -24,7 +24,7 @@ private:
     void display_help() const;
 
     void init_airport();
-    [[nodiscard]] std::unique_ptr<Aircraft> create_aircraft(const AircraftType& type) const;
+    //std::unique_ptr<Aircraft> create_aircraft(const AircraftType& type) const;
     void create_random_aircraft();
 
 public:

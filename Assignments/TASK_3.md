@@ -5,10 +5,10 @@
 Actuellement, quand un avion s'écrase, une exception de type `AircraftCrash` (qui est un alias de `std::runtime_error` déclaré dans `config.hpp`) est lancée.
 
 1. Faites en sorte que le programme puisse continuer de s'exécuter après le crash d'un avion. Pour cela, remontez l'erreur jusqu'à un endroit approprié pour procéder à la suppression de cet avion (assurez-vous bien que plus personne ne référence l'avion une fois l'exception traitée). Vous afficherez également le message d'erreur de l'exception dans `cerr`.
-> Le traitement de l'erreur est fait dans AircraftManager::move_aircraft.
+> Le traitement de l'erreur est fait dans AircraftManager::move().
  
 3. Introduisez un compteur qui est incrémenté chaque fois qu'un avion s'écrase. Choisissez une touche du clavier qui n'a pas encore été utilisée (`m` par exemple ?) et affichez ce nombre dans la console lorsque l'utilisateur appuie dessus.
-> Ajout d'un champs + de l'incrémentation dans le catch de AircraftManager::move_aircraft.
+> Ajout d'un champs + de l'incrémentation dans le catch de AircraftManager::move().
 
 4. Si vous avez fini d'implémenter la gestion du kérosène (Task_2 - Objectif 2 - A), lancez une exception de type `AircraftCrash` lorsqu'un avion tombe à court d'esssence. Normalement, cette exception devrait être traitée de la même manière que lorsqu'un avion s'écrase parce qu'il a attérit trop vite.
 > Fait, l'incrémentation est aussi faite 

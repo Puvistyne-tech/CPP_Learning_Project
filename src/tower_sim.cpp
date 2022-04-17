@@ -22,7 +22,7 @@ TowerSimulation::TowerSimulation(int argc, char** argv) :
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
     GL::init_gl(argc, argv, "Airport Tower Simulation");
 
-    GL::move_queue.emplace(&aircraft_manager);
+    manager=std::make_unique<AircraftManager>();
     create_keystrokes();
 }
 
@@ -43,20 +43,22 @@ void TowerSimulation::create_keystrokes()
     GL::keystrokes.emplace('i', []() { GL::increase_frames(); });
     GL::keystrokes.emplace('d', []() { GL::decrease_frames(); });
     GL::keystrokes.emplace('p', []() { GL::pause(); });
-    GL::keystrokes.emplace('z', []() { GL::ticks_per_sec = std::max(GL::ticks_per_sec - 1u, 1u); });
-    GL::keystrokes.emplace('a', []() { GL::ticks_per_sec = std::min(GL::ticks_per_sec + 1u, 180u); });
+//    GL::keystrokes.emplace('z', []() { GL::ticks_per_sec = std::max(GL::ticks_per_sec - 1u, 1u); });
+//    GL::keystrokes.emplace('a', []() { GL::ticks_per_sec = std::min(GL::ticks_per_sec + 1u, 180u); });
     for (auto i = 0; i < 8; i++)
     {
         GL::keystrokes.emplace('1' + i, [this, i]() { display_airline(i); });
     }
     GL::keystrokes.emplace('9', [this]() { display_all_airlines(); });
+    GL::keystrokes.emplace('m', [this]() { manager->display_crash_number(); });
+
 }
 
 void TowerSimulation::display_airline(unsigned number)
 {
     assert(number <= 7);
     const std::string& airline = airlines[number];
-    const unsigned count       = aircraft_manager.count_aircrafts(airline);
+    const unsigned count       = manager->count_aircrafts(airline);
     std::cout << " Aircraft of the line [ " << airline << " ] ::: " << count << std::endl;
 }
 
@@ -107,5 +109,5 @@ void TowerSimulation::launch()
 void TowerSimulation::create_random_aircraft()
 {
     assert(airport); // make sure the airport is initialized before creating aircraft
-    aircraft_manager.add_aircraft(factory->create_aircraft(airport->get_tower()));
+    manager->add_aircraft(factory->create_aircraft(airport->get_tower()));
 }

@@ -78,6 +78,19 @@ public:
 
     bool move() override
     {
+        if (next_refill_time == 0)
+        {
+            fuel_stock += ordered_fuel;
+            ordered_fuel     = std::min<int>(manager.get_required_fuel(), 5000);
+            next_refill_time = 100;
+            if (ordered_fuel > 0)
+                std::cout << "Qte essance commandee :(" << ordered_fuel << "), Qte en stock :" << fuel_stock
+                          << std::endl;
+        }
+        else
+        {
+            --next_refill_time;
+        }
         for (auto& t : terminals)
         {
             t.move();

@@ -11,12 +11,13 @@
 #include <ostream>
 #include <vector>
 
-class Aircraft;
+//class Aircraft;
 
 class AircraftManager : public GL::DynamicObject
 {
 private:
     std::vector<std::unique_ptr<Aircraft>> aircrafts;
+    unsigned crash_count = 0;
 
 public:
     AircraftManager();                       // Base Constructor
@@ -28,5 +29,5 @@ public:
     bool move() override;
     unsigned count_aircrafts(const std::string_view&);
     unsigned get_required_fuel();
-
+    void display_crash_number() const;
 };

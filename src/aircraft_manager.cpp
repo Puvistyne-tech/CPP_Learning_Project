@@ -26,7 +26,7 @@ bool AircraftManager::move()
               });
 
     aircrafts.erase(std::remove_if(aircrafts.begin(), aircrafts.end(),
-                                   [](std::unique_ptr<Aircraft>& air)
+                                   [this](std::unique_ptr<Aircraft>& air)
                                    {
                                        try
                                        {
@@ -34,6 +34,7 @@ bool AircraftManager::move()
                                        } catch (const AircraftCrash& crash)
                                        {
                                            std::cerr << crash.what() << std::endl;
+                                           crash_count++;
                                            return true;
                                        }
                                    }),
@@ -53,4 +54,8 @@ unsigned AircraftManager::get_required_fuel() {
                            [](unsigned x, const std::unique_ptr<Aircraft>& aircrft){
                                return aircrft->is_low_on_fuel() && aircrft->is_circling() ? aircrft->get_missing_fuel() + x : x;
                            });
+}
+
+void AircraftManager::display_crash_number() const {
+    std::cout << crash_count << " aircraft(s) have crashed so far." << std::endl;
 }
