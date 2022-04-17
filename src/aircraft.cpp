@@ -4,6 +4,11 @@
 
 #include <cmath>
 
+Aircraft::~Aircraft()
+{
+    control.on_aircraft_crash(*this);
+}
+
 void Aircraft::turn_to_waypoint()
 {
     if (!waypoints.empty())
@@ -90,6 +95,12 @@ void Aircraft::add_waypoint(const Waypoint& wp, const bool front)
 
 bool Aircraft::move()
 {
+    if (fuel <= 0)
+    {
+        if (this->has_terminal())
+            this->release_terminal();
+        throw AircraftCrash { flight_number + " out of fuel" };
+    }
     if (waypoints.empty())
     {
         if (is_service_finished) return false;
@@ -120,6 +131,8 @@ bool Aircraft::move()
         {
             if (!landing_gear_deployed)
             {
+                if (this->has_terminal())
+                    this->release_terminal();
                 using namespace std::string_literals;
                 throw AircraftCrash { flight_number + " crashed into the ground"s };
             }
@@ -128,9 +141,19 @@ bool Aircraft::move()
         {
             // if we are in the air, but too slow, then we will sink!
             const float speed_len = speed.length();
+            --fuel;
             if (speed_len < SPEED_THRESHOLD)
             {
                 pos.z() -= SINK_FACTOR * (SPEED_THRESHOLD - speed_len);
+            }
+            if (is_circling())
+            {
+                WaypointQueue way = control.reserve_terminal(*this);
+                if (!way.empty())
+                {
+                    waypoints = std::move(way);
+                    // std::cout << flight_number << "reservation ok " << std::endl;
+                }
             }
         }
 
@@ -144,3 +167,32 @@ void Aircraft::display() const
 {
     type.texture.draw(project_2D(pos), { PLANE_TEXTURE_DIM, PLANE_TEXTURE_DIM }, get_speed_octant());
 }
+
+bool Aircraft::has_terminal() const
+{
+    return !waypoints.empty() && waypoints.back().is_at_terminal();
+}
+
+bool Aircraft::is_circling() const
+{
+    return !is_service_finished && !is_on_ground() && !has_terminal();
+}
+
+void Aircraft::refill(unsigned int& fuel_stock)
+{
+    auto needed = get_missing_fuel();
+    if (fuel_stock == 0) return;
+    if (fuel_stock < needed) {
+        fuel += fuel_stock;
+        fuel_stock = 0;
+    } else {
+        fuel += needed;
+        fuel_stock -= needed;
+    }
+}
+
+//void on_aircraft_crash(const Aircraft& aircraft) {
+//    for (auto& terminal : terminals) {
+//        terminal.on_aircraft_crash(aircraft);
+//    }
+//}

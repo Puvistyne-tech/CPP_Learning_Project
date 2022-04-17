@@ -3,6 +3,7 @@
 #include "GL/displayable.hpp"
 #include "GL/dynamic_object.hpp"
 #include "GL/texture.hpp"
+#include "aircraft_manager.hpp"
 #include "airport_type.hpp"
 #include "geometry.hpp"
 #include "img/image.hpp"
@@ -19,7 +20,13 @@ private:
     const Point3D pos;
     const GL::Texture2D texture;
     std::vector<Terminal> terminals;
+    AircraftManager& manager;
     Tower tower;
+
+    //
+    unsigned int fuel_stock       = 0;
+    unsigned int ordered_fuel     = 0;
+    unsigned int next_refill_time = 0;
 
     // reserve a terminal
     // if a terminal is free, return
@@ -51,12 +58,17 @@ private:
     Terminal& get_terminal(const size_t terminal_num) { return terminals.at(terminal_num); }
 
 public:
-    Airport(const AirportType& type_, const Point3D& pos_, const img::Image* image, const float z_ = 1.0f) :
+    ~Airport() override                = default;
+    Airport(const Airport&)            = delete;
+    Airport& operator=(const Airport&) = delete;
+    Airport(const AirportType& type_, const Point3D& pos_, const img::Image* image, AircraftManager& _manager,
+            const float z_ = 1.0f) :
         GL::Displayable { z_ },
         type { type_ },
         pos { pos_ },
         texture { image },
         terminals { type.create_terminals() },
+        manager { _manager },
         tower { *this }
     {}
 
@@ -69,9 +81,18 @@ public:
         for (auto& t : terminals)
         {
             t.move();
+            if (fuel_stock > 0)
+                t.refill_aircraft_if_needed(fuel_stock);
         }
         return true;
     }
 
+    void on_aircraft_crash(const Aircraft& aircraft)
+    {
+        for (auto& terminal : terminals)
+        {
+            terminal.on_aircraft_crash(aircraft);
+        }
+    }
     friend class Tower;
 };

@@ -5,6 +5,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <numeric>
 
 struct Point2D
 {
@@ -64,7 +65,7 @@ struct Point2D
 
 struct Point3D
 {
-    float values[3] {};
+    std::array<float, 3> values {};
 
     Point3D() {}
     Point3D(float x, float y, float z) : values { x, y, z } {}
@@ -80,25 +81,24 @@ struct Point3D
 
     Point3D& operator+=(const Point3D& other)
     {
-        x() += other.x();
-        y() += other.y();
-        z() += other.z();
+
+        std::transform(values.begin(), values.end(), other.values.begin(),values.begin(),
+                       std::plus<float>());
         return *this;
     }
 
     Point3D& operator-=(const Point3D& other)
     {
-        x() -= other.x();
-        y() -= other.y();
-        z() -= other.z();
+        std::transform(values.begin(), values.end(), other.values.begin(),values.begin(),
+                       std::minus<float>());
         return *this;
     }
 
     Point3D& operator*=(const float scalar)
     {
-        x() *= scalar;
-        y() *= scalar;
-        z() *= scalar;
+        std::transform(values.begin(), values.end(), values.begin(),
+                       [scalar](float v) { return v * scalar; });
+
         return *this;
     }
 
@@ -125,7 +125,12 @@ struct Point3D
 
     Point3D operator-() const { return Point3D { -x(), -y(), -z() }; }
 
-    float length() const { return std::sqrt(x() * x() + y() * y() + z() * z()); }
+    float length() const {
+//        return std::sqrt(x() * x() + y() * y() + z() * z());
+        const float l = std::accumulate(values.begin(), values.end(), static_cast<float>(0),
+                                    [](float sum, float x){ return sum + x*x;});
+        return std::sqrt(l);
+    }
 
     float distance_to(const Point3D& other) const { return (*this - other).length(); }
 

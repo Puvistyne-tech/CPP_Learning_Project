@@ -11,6 +11,8 @@
 #include <ostream>
 #include <vector>
 
+class Aircraft;
+
 class AircraftManager : public GL::DynamicObject
 {
 private:
@@ -24,4 +26,7 @@ public:
 
     void add_aircraft(std::unique_ptr<Aircraft>);
     bool move() override;
+    unsigned count_aircrafts(const std::string_view&);
+    unsigned get_required_fuel();
+
 };

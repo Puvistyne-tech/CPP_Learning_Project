@@ -23,6 +23,7 @@ A cette fin, rajoutez des callbacks sur les touches `0`..`7` de manière à ce q
 Rendez-vous compte de quelle classe peut acquérir cet information. Utilisez la bonne fonction de `<algorithm>` pour obtenir le résultat.
 > La classe pouvant compter les avions appartenant à une ligne est AircraftManager. J'utilise std::count_if pour compter
 > les avions dont la ligne commence par le code de l'airline
+> J'ai aussi ajouté une autre option ```9``` pour voirs tous les types en même temps
 
 
 ### C - Relooking de Point3D

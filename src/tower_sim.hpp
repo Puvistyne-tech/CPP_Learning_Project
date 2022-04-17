@@ -13,6 +13,7 @@ private:
     // TASK 1
     AircraftManager aircraft_manager;
     std::unique_ptr<AircraftFactory> factory;
+    std::unique_ptr<AircraftManager> manager;
 
     std::string data_path;
 
@@ -31,4 +32,6 @@ public:
     ~TowerSimulation();
 
     void launch();
+    void display_airline(unsigned int number);
+    void display_all_airlines();
 };

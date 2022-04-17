@@ -15,9 +15,6 @@ class Aircraft;
 class Tower
 {
 private:
-//    using AircraftToTerminal      = std::vector<std::pair<const Aircraft*, size_t>>;
-//    using AircraftAndTerminalIter = AircraftToTerminal::iterator;
-
     // TASK_0 C-6
     // We can use a map or an unordered map, in order to retrieve the terminal index from the Aircraft in
     // O(1).
@@ -30,14 +27,12 @@ private:
 
     WaypointQueue get_circle() const;
 
-//    AircraftAndTerminalIter find_craft_and_terminal(const Aircraft& aircraft)
-//    {
-//        return std::find_if(reserved_terminals.begin(), reserved_terminals.end(),
-//                            [&aircraft](const auto& x) { return x.first == &aircraft; });
-//    }
 
 public:
-    Tower(Airport& airport_) : airport { airport_ } {}
+    ~Tower() = default;
+    Tower(const Tower&) = delete;
+    Tower& operator=(const Tower&) = delete;
+    explicit Tower(Airport& airport_) : airport { airport_ } {}
 
     // produce instructions for aircraft
     WaypointQueue get_instructions(Aircraft& aircraft);
@@ -45,4 +40,6 @@ public:
     //
     void release_terminal_if_reserved(Aircraft* aircraft);
     WaypointQueue reserve_terminal(Aircraft& aircraft);
+    void on_aircraft_crash(const Aircraft& aircraft);
 };
+

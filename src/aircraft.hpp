@@ -22,7 +22,8 @@ private:
     bool is_at_terminal        = false;
 
     //
-    bool is_service_finished=false;
+    bool is_service_finished = false;
+    unsigned int fuel              = 0;
 
     // turn the aircraft to arrive at the next waypoint
     // try to facilitate reaching the waypoint after the next by facing the
@@ -44,10 +45,16 @@ private:
     bool is_on_ground() const { return pos.z() < DISTANCE_THRESHOLD; }
     float max_speed() const { return is_on_ground() ? type.max_ground_speed : type.max_air_speed; }
 
-    Aircraft(const Aircraft&) = delete;
+    Aircraft(const Aircraft&)            = delete;
     Aircraft& operator=(const Aircraft&) = delete;
 
+    unsigned int static initial_fuel(const AircraftType& type) {
+        const double f = std::rand() % (type.max_fuel - static_cast<int>(type.min_fuel()));
+        return type.min_fuel() + f;
+    }
+
 public:
+    ~Aircraft() override;
     Aircraft(const AircraftType& type_, const std::string_view& flight_number_, const Point3D& pos_,
              const Point3D& speed_, Tower& control_) :
         GL::Displayable { pos_.x() + pos_.y() },
@@ -55,7 +62,8 @@ public:
         flight_number { flight_number_ },
         pos { pos_ },
         speed { speed_ },
-        control { control_ }
+        control { control_ },
+        fuel {initial_fuel(type_)}
     {
         speed.cap_length(max_speed());
     }
@@ -66,5 +74,12 @@ public:
     void display() const override;
     bool move() override;
 
+    void release_terminal() { control.release_terminal_if_reserved(this); }
+    bool has_terminal() const;
+    bool is_circling() const;
+    int getFuel() const { return fuel; }
+    void refill(unsigned int&);
+    bool is_low_on_fuel() const { return fuel < type.min_fuel(); }
+    unsigned int get_missing_fuel() const  { return type.max_fuel - (unsigned)std::ceil(fuel); }
     friend class Tower;
 };
