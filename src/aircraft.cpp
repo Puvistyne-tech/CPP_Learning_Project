@@ -4,6 +4,7 @@
 
 #include <cmath>
 
+//
 Aircraft::~Aircraft()
 {
     control.on_aircraft_crash(*this);
