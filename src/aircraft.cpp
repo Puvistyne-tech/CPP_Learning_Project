@@ -107,7 +107,13 @@ bool Aircraft::move()
     {
         if (is_service_finished)
             return false;
-        waypoints = control.get_instructions(*this);
+//        waypoints = control.get_instructions(*this);
+//        template<bool front = false>
+        for (const auto& wp: control.get_instructions(*this))
+        {
+            const bool front = false;
+            add_waypoint<front>(wp);
+        }
     }
 
     if (!is_at_terminal)
