@@ -1,6 +1,7 @@
 #include "aircraft.hpp"
 
 #include "GL/opengl_interface.hpp"
+#include "aircraft_crash.hpp"
 
 #include <cmath>
 
@@ -100,11 +101,12 @@ bool Aircraft::move()
     {
         if (this->has_terminal())
             this->release_terminal();
-        throw AircraftCrash { flight_number + " out of fuel" };
+        throw AircraftCrash { flight_number, pos, speed, out_of_fuel };
     }
     if (waypoints.empty())
     {
-        if (is_service_finished) return false;
+        if (is_service_finished)
+            return false;
         waypoints = control.get_instructions(*this);
     }
 
@@ -135,7 +137,7 @@ bool Aircraft::move()
                 if (this->has_terminal())
                     this->release_terminal();
                 using namespace std::string_literals;
-                throw AircraftCrash { flight_number + " crashed into the ground"s };
+                throw AircraftCrash { flight_number, pos, speed, bad_landing };
             }
         }
         else
@@ -182,18 +184,22 @@ bool Aircraft::is_circling() const
 void Aircraft::refill(unsigned int& fuel_stock)
 {
     auto needed = get_missing_fuel();
-    if (fuel_stock == 0) return;
-    if (fuel_stock < needed) {
+    if (fuel_stock == 0)
+        return;
+    if (fuel_stock < needed)
+    {
         fuel += fuel_stock;
         fuel_stock = 0;
-    } else {
+    }
+    else
+    {
         fuel += needed;
         fuel_stock -= needed;
     }
 }
 
-//void on_aircraft_crash(const Aircraft& aircraft) {
-//    for (auto& terminal : terminals) {
-//        terminal.on_aircraft_crash(aircraft);
-//    }
-//}
+// void on_aircraft_crash(const Aircraft& aircraft) {
+//     for (auto& terminal : terminals) {
+//         terminal.on_aircraft_crash(aircraft);
+//     }
+// }

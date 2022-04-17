@@ -3,6 +3,8 @@
 //
 #include "aircraft_manager.hpp"
 
+#include "aircraft_crash.hpp"
+
 #include <algorithm>
 #include <numeric>
 
